@@ -1,0 +1,44 @@
+version: '2'
+services:
+
+  web:
+    build: ./
+    container_name: racktables_web
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - DB_NAME=${MYSQL_DATABASE}
+      - DB_USER=${MYSQL_USER}
+      - DB_PASS=${MYSQL_PASSWORD}
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_ROOT_PASS=${MYSQL_ROOT_PASSWORD}
+      - TZ=Asia/Bangkok
+    links:
+      - db
+    
+  db:
+    image: percona:5.7.14
+    container_name: racktables_db
+    restart: always
+    command:
+      - mysqld
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --max_connections=200
+      - --max_heap_table_size=128M
+      - --max_allowed_packet=32M
+      - --tmp_table_size=128M
+      - --join_buffer_size=128M
+      - --innodb_buffer_pool_size=1G
+      - --innodb_doublewrite=OFF
+      - --innodb_flush_log_at_timeout=3
+      - --innodb_read_io_threads=32
+      - --innodb_write_io_threads=16
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
