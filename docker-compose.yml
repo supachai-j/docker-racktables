@@ -46,6 +46,7 @@ services:
   phpmyadmin:
       image: phpmyadmin/phpmyadmin
       container_name: racktables_phpmyadmin
+      restart: always
       environment:
           - PMA_ARBITRARY=1
           - PMA_HOST=db

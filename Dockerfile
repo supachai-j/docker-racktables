@@ -1,4 +1,5 @@
 FROM php:5-apache
+
 MAINTAINER Supachai Jaturaprom <jaturaprom.su@gmail.com>
 
 ## -- Install Package --
@@ -12,7 +13,7 @@ RUN \
                      libsnmp-dev \
                      snmp \
                      libldb-dev \
-                     mysql \
+                     mysql-client \
   && docker-php-ext-install gd \
                             snmp \
                             pdo_mysql \
@@ -28,10 +29,15 @@ COPY ./racktables /racktables
 
 COPY ./init-db.sql /init-db.sql
 
+## -- Copy Old version
+COPY ./wwwroot /wwwroot
+
 RUN \
   tar -zxf /racktables/RackTables-*.tar.gz -C /tmp && \
   cd /tmp/RackTables-*/ && make install && find /etc/apache2 -type f -print0 \
   | xargs -0 sed -i 's@/var/www/html@/usr/local/share/RackTables/wwwroot@g;s@Directory /var/www@Directory /usr/local/share/RackTables@g' \
+  && mv /usr/local/share/RackTables/wwwroot /usr/local/share/RackTables/wwwroot.bk \
+  && cp -ap /wwwroot /usr/local/share/RackTables \
   && touch /usr/local/share/RackTables/wwwroot/inc/secret.php \
   && chmod a=rw '/usr/local/share/RackTables/wwwroot/inc/secret.php' \
   && chown -R www-data: /usr/local/share/RackTables/wwwroot

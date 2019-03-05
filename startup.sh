@@ -10,7 +10,8 @@ sed -i -e "s/%DB_NAME%/${DB_NAME}/" \
        -e "s/%DB_PASS%/${DB_PASS}/" \
     /init-db.sql
 
-echo "$(date +%F_%R) [New Install] Initial Database."
+#echo "$(date +%F_%R) [New Install] Initial Database."
+#mysql -u$DB_ROOT_PASS -p$DB_PASS 
 
 # Installation Racktables
 #tar -zxf /racktables/RackTables-*.tar.gz -C /tmp && \
@@ -21,15 +22,15 @@ echo "$(date +%F_%R) [New Install] Initial Database."
 #  && chown -R www-data: /usr/local/share/RackTables/wwwroot
 
 ## set database racktables
-#cat <<EOF > /usr/local/share/RackTables/wwwroot/inc/secret.php
-#<?php
-#\$pdo_dsn = 'mysql:host=$DB_HOST;dbname=$DB_NAME';
-#\$db_username = '$DB_USER';
-#\$db_password = '$DB_PASS';
-#\$user_auth_src = 'database';
-#\$require_local_account = TRUE;
-#?>
-#EOF
+cat <<EOF > /usr/local/share/RackTables/wwwroot/inc/secret.php
+<?php
+\$pdo_dsn = 'mysql:host=$DB_HOST;dbname=$DB_NAME';
+\$db_username = '$DB_USER';
+\$db_password = '$DB_PASS';
+\$user_auth_src = 'database';
+\$require_local_account = TRUE;
+?>
+EOF
 
 # set permission
 chown www-data: /usr/local/share/RackTables/wwwroot/inc/secret.php
